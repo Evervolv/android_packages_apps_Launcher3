@@ -55,6 +55,7 @@ import com.android.launcher3.states.RotationHelper;
 import com.android.launcher3.uioverrides.flags.DeveloperOptionsFragment;
 import com.android.launcher3.uioverrides.plugins.PluginManagerWrapper;
 import com.android.launcher3.util.DisplayController;
+import com.android.launcher3.util.PackageManagerHelper;
 
 import java.util.Collections;
 import java.util.List;
@@ -85,6 +86,9 @@ public class SettingsActivity extends FragmentActivity
     static final String EXTRA_FRAGMENT = ":settings:fragment";
     @VisibleForTesting
     static final String EXTRA_FRAGMENT_ARGS = ":settings:fragment_args";
+
+    private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
+    private static final String SEARCH_PACKAGE = "com.google.android.googlequicksearchbox";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -290,6 +294,10 @@ public class SettingsActivity extends FragmentActivity
                 case DEVELOPER_OPTIONS_KEY:
                     mDeveloperOptionPref = preference;
                     return updateDeveloperOption();
+
+                case KEY_MINUS_ONE:
+                    PackageManagerHelper helper = new PackageManagerHelper(getContext());
+                    return helper.isAppEnabled(SEARCH_PACKAGE);
             }
 
             return true;
