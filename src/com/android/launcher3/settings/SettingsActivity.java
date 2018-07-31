@@ -81,6 +81,9 @@ public class SettingsActivity extends FragmentActivity
     @VisibleForTesting
     static final String EXTRA_FRAGMENT_ARGS = ":settings:fragment_args";
 
+    private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
+    private static final String SEARCH_PACKAGE = "com.google.android.googlequicksearchbox";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -268,6 +271,9 @@ public class SettingsActivity extends FragmentActivity
                 case DEVELOPER_OPTIONS_KEY:
                     mDeveloperOptionPref = preference;
                     return updateDeveloperOption();
+
+                case KEY_MINUS_ONE:
+                    return Utilities.isPackageEnabled(getActivity(), SEARCH_PACKAGE);
             }
 
             return true;
