@@ -106,6 +106,15 @@ public class PackageManagerHelper {
     }
 
     /**
+     * Returns whether the target app is enabled for a given user
+     */
+    public boolean isAppEnabled(@NonNull final String packageName,
+            @NonNull final UserHandle user) {
+        final ApplicationInfo info = getApplicationInfo(packageName, user, 0);
+        return info != null && info.enabled;
+    }
+
+    /**
      * Returns the application info for the provided package or null
      */
     @Nullable

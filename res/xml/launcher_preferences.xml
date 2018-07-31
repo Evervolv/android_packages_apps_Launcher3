@@ -50,4 +50,10 @@
         launcher:logIdOn="615"
         launcher:logIdOff="616" />
 
+    <SwitchPreference
+        android:key="pref_enable_minus_one"
+        android:title="@string/title_show_google_app"
+        android:summary="@string/pref_show_google_now_summary"
+        android:defaultValue="true" />
+
 </androidx.preference.PreferenceScreen>
