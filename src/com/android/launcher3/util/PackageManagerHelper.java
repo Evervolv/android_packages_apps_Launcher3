@@ -22,6 +22,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
@@ -90,6 +91,18 @@ public class PackageManagerHelper {
         } catch (NameNotFoundException e) {
             Log.e(TAG, "Failed to get installer package for app package:" + packageName, e);
             return null;
+        }
+    }
+
+    /**
+     * Returns whether the target app is enabled for a given user
+     */
+    public boolean isAppEnabled(@NonNull final String packageName) {
+        try {
+            final ApplicationInfo info = mPm.getApplicationInfo(packageName, 0);
+            return info.enabled;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
         }
     }
 
