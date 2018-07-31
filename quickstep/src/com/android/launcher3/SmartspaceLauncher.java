@@ -16,8 +16,20 @@
 
 package com.android.launcher3;
 
+import com.android.launcher3.uioverrides.OverlayCallbackImpl;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
+
+import com.android.systemui.plugins.shared.LauncherOverlayManager;
 
 public class SmartspaceLauncher extends QuickstepLauncher {
 
+    private LauncherOverlayManager mLauncherOverlayManager;
+
+    @Override
+    protected LauncherOverlayManager getDefaultOverlay() {
+        if (mLauncherOverlayManager == null) {
+            mLauncherOverlayManager = new OverlayCallbackImpl(this);
+        }
+        return mLauncherOverlayManager;
+    }
 }
