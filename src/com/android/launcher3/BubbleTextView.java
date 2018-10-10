@@ -21,6 +21,8 @@ import static android.graphics.fonts.FontStyle.FONT_WEIGHT_NORMAL;
 import static android.text.Layout.Alignment.ALIGN_NORMAL;
 
 import static com.android.launcher3.Flags.enableCursorHoverStates;
+import static com.android.launcher3.InvariantDeviceProfile.KEY_SHOW_DESKTOP_LABELS;
+import static com.android.launcher3.InvariantDeviceProfile.KEY_SHOW_DRAWER_LABELS;
 import static com.android.launcher3.graphics.PreloadIconDrawable.newPendingIcon;
 import static com.android.launcher3.icons.BitmapInfo.FLAG_NO_BADGE;
 import static com.android.launcher3.icons.BitmapInfo.FLAG_SKIP_USER_BADGE;
@@ -33,6 +35,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -220,6 +223,8 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
 
     private CancellableTask mIconLoadRequest;
 
+    private boolean mShouldShowLabel;
+
     private boolean mEnableIconUpdateAnimation = false;
 
     public BubbleTextView(Context context) {
@@ -242,6 +247,8 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
                 == View.LAYOUT_DIRECTION_RTL);
         mDeviceProfile = mActivity.getDeviceProfile();
         mCenterVertically = a.getBoolean(R.styleable.BubbleTextView_centerVertically, false);
+
+        SharedPreferences prefs = LauncherPrefs.getPrefs(context.getApplicationContext());
 
         mDisplay = a.getInteger(R.styleable.BubbleTextView_iconDisplay, DISPLAY_WORKSPACE);
         final int defaultIconSize;
@@ -272,6 +279,14 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
             defaultIconSize = mDeviceProfile.iconSizePx;
         }
 
+        boolean showDrawerLabels = mDisplay == DISPLAY_ALL_APPS
+                || mDisplay == DISPLAY_PREDICTION_ROW
+                || mDisplay == DISPLAY_SEARCH_RESULT_APP_ROW;
+        if (showDrawerLabels) {
+            mShouldShowLabel = prefs.getBoolean(KEY_SHOW_DRAWER_LABELS, true);
+        } else {
+            mShouldShowLabel = prefs.getBoolean(KEY_SHOW_DESKTOP_LABELS, true);
+        }
 
         mIconSize = a.getDimensionPixelSize(R.styleable.BubbleTextView_iconSizeOverride,
                 defaultIconSize);
@@ -500,7 +515,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
     @UiThread
     public void applyLabel(ItemInfo info) {
         CharSequence label = info.title;
-        if (label != null) {
+        if (mShouldShowLabel && label != null) {
             mLastOriginalText = label;
             mLastModifiedText = mLastOriginalText;
             mBreakPointsIntArray = StringMatcherUtility.getListOfBreakpoints(label, MATCHER);
@@ -894,6 +909,10 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         } else {
             super.setTextColor(getModifiedColor());
         }
+    }
+
+    public boolean shouldShowLabel() {
+        return mShouldShowLabel;
     }
 
     public boolean shouldTextBeVisible() {
