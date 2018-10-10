@@ -319,6 +319,10 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
                 encryptionType = EncryptionType.ENCRYPTED,
                 type = String::class.java,
             )
+        @JvmField
+        val SHOW_DESKTOP_LABELS = backedUpItem("pref_desktop_show_labels", true)
+        @JvmField
+        val SHOW_DRAWER_LABELS = backedUpItem("pref_drawer_show_labels", true)
 
         // Preferences for widget configurations
         @JvmField

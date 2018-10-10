@@ -24,6 +24,8 @@ import static com.android.launcher3.LauncherPrefs.ENABLE_TWOLINE_ALLAPPS_TOGGLE;
 import static com.android.launcher3.LauncherPrefs.FIXED_LANDSCAPE_MODE;
 import static com.android.launcher3.LauncherPrefs.GRID_NAME;
 import static com.android.launcher3.LauncherPrefs.NON_FIXED_LANDSCAPE_GRID_NAME;
+import static com.android.launcher3.LauncherPrefs.SHOW_DESKTOP_LABELS;
+import static com.android.launcher3.LauncherPrefs.SHOW_DRAWER_LABELS;
 import static com.android.launcher3.Utilities.dpiFromPx;
 import static com.android.launcher3.testing.shared.ResourceUtils.INVALID_RESOURCE_HANDLE;
 import static com.android.launcher3.util.DisplayController.CHANGE_DENSITY;
@@ -181,6 +183,9 @@ public class InvariantDeviceProfile {
 
     public boolean[] startAlignTaskbar;
 
+    public boolean showDrawerLabel;
+    public boolean showDesktopLabel;
+
     /**
      * Number of icons inside the hotseat area.
      */
@@ -300,11 +305,15 @@ public class InvariantDeviceProfile {
             } else if (ENABLE_TWOLINE_ALLAPPS_TOGGLE.getSharedPrefKey().equals(key)
                     && enableTwoLinesInAllApps != prefs.get(ENABLE_TWOLINE_ALLAPPS_TOGGLE)) {
                 onConfigChanged(context);
+            } else if (SHOW_DESKTOP_LABELS.getSharedPrefKey().equals(key) || SHOW_DRAWER_LABELS.getSharedPrefKey().equals(key)) {
+                onConfigChanged(context);
             }
         };
-        prefs.addListener(prefListener, FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE);
+        prefs.addListener(prefListener, FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE,
+                SHOW_DESKTOP_LABELS, SHOW_DRAWER_LABELS);
         lifeCycle.addCloseable(() -> prefs.removeListener(prefListener,
-                FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE));
+                FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE,
+                SHOW_DESKTOP_LABELS, SHOW_DRAWER_LABELS));
 
         SimpleBroadcastReceiver localeReceiver = new SimpleBroadcastReceiver(context,
                 MAIN_EXECUTOR, i -> onConfigChanged(context));
@@ -445,6 +454,9 @@ public class InvariantDeviceProfile {
         transientTaskbarIconSize = displayOption.transientTaskbarIconSize;
 
         startAlignTaskbar = displayOption.startAlignTaskbar;
+
+        showDrawerLabel = mPrefs.get(SHOW_DRAWER_LABELS);
+        showDesktopLabel = mPrefs.get(SHOW_DESKTOP_LABELS);
 
         // Fixed Landscape mode
         isFixedLandscape = closestProfile.mIsFixedLandscape;

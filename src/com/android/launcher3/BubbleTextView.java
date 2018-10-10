@@ -26,6 +26,8 @@ import static com.android.launcher3.BubbleTextView.RunningAppState.NOT_RUNNING;
 import static com.android.launcher3.BubbleTextView.RunningAppState.MINIMIZED;
 import static com.android.launcher3.Flags.enableContrastTiles;
 import static com.android.launcher3.Flags.enableCursorHoverStates;
+import static com.android.launcher3.LauncherPrefs.SHOW_DESKTOP_LABELS;
+import static com.android.launcher3.LauncherPrefs.SHOW_DRAWER_LABELS;
 import static com.android.launcher3.allapps.AlphabeticalAppsList.PRIVATE_SPACE_PACKAGE;
 import static com.android.launcher3.graphics.PreloadIconDrawable.newPendingIcon;
 import static com.android.launcher3.icons.BitmapInfo.FLAG_NO_BADGE;
@@ -276,6 +278,8 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
 
     private boolean mHighResUpdateInProgress = false;
 
+    private boolean mShouldShowLabel;
+
     public BubbleTextView(Context context) {
         this(context, null, 0);
     }
@@ -329,6 +333,14 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
             defaultIconSize = mDeviceProfile.iconSizePx;
         }
 
+        boolean showDrawerLabels = mDisplay == DISPLAY_ALL_APPS
+                || mDisplay == DISPLAY_PREDICTION_ROW
+                || mDisplay == DISPLAY_SEARCH_RESULT_APP_ROW;
+        if (showDrawerLabels) {
+            mShouldShowLabel = mDeviceProfile.showDrawerLabel;
+        } else {
+            mShouldShowLabel = mDeviceProfile.showDesktopLabel;
+        }
 
         mIconSize = a.getDimensionPixelSize(R.styleable.BubbleTextView_iconSizeOverride,
                 defaultIconSize);
@@ -623,7 +635,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
     @UiThread
     public void applyLabel(ItemInfo info) {
         CharSequence label = info.title;
-        if (label != null) {
+        if (mShouldShowLabel && label != null) {
             mLastOriginalText = label;
             mLastModifiedText = mLastOriginalText;
             mBreakPointsIntArray = StringMatcherUtility.getListOfBreakpoints(label, MATCHER);
@@ -1083,6 +1095,10 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         } else {
             super.setTextColor(getModifiedColor());
         }
+    }
+
+    public boolean shouldShowLabel() {
+        return mShouldShowLabel;
     }
 
     public boolean shouldTextBeVisible() {

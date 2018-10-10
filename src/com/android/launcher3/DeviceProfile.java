@@ -318,6 +318,9 @@ public class DeviceProfile {
     // DragController
     public int flingToDeleteThresholdVelocity;
 
+    public boolean showDrawerLabel;
+    public boolean showDesktopLabel;
+
     /** Used only as an alternative to mocking when null values cannot be used. */
     @VisibleForTesting
     public DeviceProfile() {
@@ -384,6 +387,8 @@ public class DeviceProfile {
         mTransientTaskbarClaimedSpace = 0;
         startAlignTaskbar = false;
         isTransientTaskbar = false;
+        showDrawerLabel = true;
+        showDesktopLabel = true;
     }
 
     /** TODO: Once we fully migrate to staged split, remove "isMultiWindowMode" */
@@ -457,6 +462,9 @@ public class DeviceProfile {
                 mTypeIndex = INDEX_DEFAULT;
             }
         }
+
+        showDrawerLabel = inv.showDrawerLabel;
+        showDesktopLabel = inv.showDesktopLabel;
 
         this.isTransientTaskbar = isTransientTaskbar;
         int transientTaskbarIconSize = pxFromDp(inv.transientTaskbarIconSize[mTypeIndex], mMetrics);
