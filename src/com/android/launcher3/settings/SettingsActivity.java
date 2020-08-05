@@ -52,6 +52,8 @@ import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.config.FeatureFlags;
+import com.android.launcher3.icons.IconPackStore;
+import com.android.launcher3.icons.IconPackSettingsActivity;
 import com.android.launcher3.model.WidgetsModel;
 import com.android.launcher3.states.RotationHelper;
 import com.android.launcher3.uioverrides.flags.DeveloperOptionsFragment;
@@ -78,6 +80,7 @@ public class SettingsActivity extends FragmentActivity
     private static final String FLAGS_PREFERENCE_KEY = "flag_toggler";
 
     private static final String NOTIFICATION_DOTS_PREFERENCE_KEY = "pref_icon_badging";
+    private static final String KEY_ICON_PACK = "pref_icon_pack";
 
     public static final String EXTRA_FRAGMENT_ARG_KEY = ":settings:fragment_args_key";
     public static final String EXTRA_SHOW_FRAGMENT_ARGS = ":settings:show_fragment_args";
@@ -126,6 +129,7 @@ public class SettingsActivity extends FragmentActivity
             // Display the fragment as the main content.
             fm.beginTransaction().replace(R.id.content_frame, f).commit();
         }
+
         LauncherPrefs.getPrefs(getApplicationContext())
                 .registerOnSharedPreferenceChangeListener(this);
     }
@@ -207,7 +211,8 @@ public class SettingsActivity extends FragmentActivity
     /**
      * This fragment shows the launcher preferences.
      */
-    public static class LauncherSettingsFragment extends PreferenceFragmentCompat {
+    public static class LauncherSettingsFragment extends PreferenceFragmentCompat implements
+            SharedPreferences.OnSharedPreferenceChangeListener {
 
         private String mHighLightKey;
         private boolean mPreferenceHighlighted = false;
@@ -228,6 +233,20 @@ public class SettingsActivity extends FragmentActivity
             getPreferenceManager().setSharedPreferencesName(LauncherFiles.SHARED_PREFERENCES_KEY);
             setPreferencesFromResource(R.xml.launcher_preferences, rootKey);
 
+            updatePreferences();
+
+            LauncherPrefs.getPrefs(getContext())
+                    .registerOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
+        public void onDestroyView () {
+            LauncherPrefs.getPrefs(getContext())
+                    .unregisterOnSharedPreferenceChangeListener(this);
+            super.onDestroyView();
+        }
+
+        private void updatePreferences() {
             PreferenceScreen screen = getPreferenceScreen();
             for (int i = screen.getPreferenceCount() - 1; i >= 0; i--) {
                 Preference preference = screen.getPreference(i);
@@ -275,6 +294,15 @@ public class SettingsActivity extends FragmentActivity
             outState.putBoolean(SAVE_HIGHLIGHTED_KEY, mPreferenceHighlighted);
         }
 
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+            switch (key) {
+                case IconPackStore.LAUNCHER_ICON_PACK:
+                    updatePreferences();
+                    break;
+            }
+        }
+
         protected String getParentKeyForPref(String key) {
             return null;
         }
@@ -316,6 +344,10 @@ public class SettingsActivity extends FragmentActivity
                     } else {
                         return helper.isAppEnabled(SEARCH_PACKAGE, Process.myUserHandle());
                     }
+
+                case KEY_ICON_PACK:
+                    setupIconPackPreference(preference);
+                    return true;
             }
 
             return true;
@@ -386,6 +418,16 @@ public class SettingsActivity extends FragmentActivity
                     rv.getChildAt(0)
                             .performAccessibilityAction(ACTION_ACCESSIBILITY_FOCUS, null);
                 }
+            });
+        }
+
+        private void setupIconPackPreference(Preference preference) {
+            final String defaultLabel = getResources().getString(R.string.icon_pack_default_label);
+            final String pkgLabel = new IconPackStore(getContext()).getCurrentLabel(defaultLabel);
+            preference.setSummary(pkgLabel);
+            preference.setOnPreferenceClickListener(p -> {
+                startActivity(new Intent(getActivity(), IconPackSettingsActivity.class));
+                return true;
             });
         }
     }
