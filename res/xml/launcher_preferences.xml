@@ -16,6 +16,7 @@
 
 <androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:evervolv="http://schemas.android.com/apk/res/evervolv.platform"
     xmlns:launcher="http://schemas.android.com/apk/res-auto">
 
     <com.android.launcher3.settings.NotificationDotsPreference
@@ -55,5 +56,13 @@
         android:title="@string/title_show_google_app"
         android:summary="@string/pref_show_google_now_summary"
         android:defaultValue="true" />
+
+    <Preference
+        android:key="pref_suggestions"
+        android:title="@string/suggestion_pref_screen_title"
+        android:summary="@string/suggestion_pref_screen_desc"
+        android:persistent="false">
+        <intent android:action="android.settings.ACTION_CONTENT_SUGGESTIONS_SETTINGS" />
+    </Preference>
 
 </androidx.preference.PreferenceScreen>
