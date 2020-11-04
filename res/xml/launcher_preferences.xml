@@ -43,6 +43,14 @@
         android:summary="@string/pref_show_google_now_summary"
         android:title="@string/title_show_google_app" />
 
+    <androidx.preference.PreferenceScreen
+        android:key="pref_suggestions"
+        android:title="@string/pref_suggestions_title"
+        android:summary="@string/pref_suggestions_summary"
+        android:persistent="false">
+        <intent android:action="android.settings.ACTION_CONTENT_SUGGESTIONS_SETTINGS" />
+    </androidx.preference.PreferenceScreen>
+
     <!--
       LAUNCHER_HOME_SCREEN_ROTATION_ENABLED(615)
       LAUNCHER_HOME_SCREEN_ROTATION_DISABLED(616)
