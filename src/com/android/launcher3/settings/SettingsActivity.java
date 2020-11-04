@@ -83,6 +83,8 @@ public class SettingsActivity extends FragmentActivity
     static final String EXTRA_FRAGMENT_ARGS = ":settings:fragment_args";
 
     private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
+    private static final String KEY_SUGGESTIONS = "pref_suggestions";
+    private static final String PERSONALIZATION_PACKAGE = "com.google.android.as";
     private static final String SEARCH_PACKAGE = "com.google.android.googlequicksearchbox";
 
     @Override
@@ -284,6 +286,9 @@ public class SettingsActivity extends FragmentActivity
 
                 case KEY_MINUS_ONE:
                     return Utilities.isPackageEnabled(getActivity(), SEARCH_PACKAGE);
+
+                case KEY_SUGGESTIONS:
+                    return Utilities.isPackageEnabled(getActivity(), PERSONALIZATION_PACKAGE);
             }
 
             return true;
