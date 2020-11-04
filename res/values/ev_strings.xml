@@ -23,4 +23,8 @@
 
     <!-- Folder titles -->
     <string name="google_folder_title" translatable="false">Google</string>
+
+    <!-- App suggestions -->
+    <string name="pref_suggestions_title">Suggestions</string>
+    <string name="pref_suggestions_summary">For app drawer &amp; home screen suggestions</string>
 </resources>
