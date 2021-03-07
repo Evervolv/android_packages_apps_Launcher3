@@ -40,6 +40,7 @@ import java.util.Set;
 
 public final class IconPackSettingsFragment extends RadioSettingsFragment {
     private static final IntentFilter PKG_UPDATE_INTENT = new IntentFilter();
+
     static {
         PKG_UPDATE_INTENT.addAction(Intent.ACTION_PACKAGE_INSTALL);
         PKG_UPDATE_INTENT.addAction(Intent.ACTION_PACKAGE_ADDED);
@@ -47,6 +48,17 @@ public final class IconPackSettingsFragment extends RadioSettingsFragment {
         PKG_UPDATE_INTENT.addAction(Intent.ACTION_PACKAGE_REMOVED);
         PKG_UPDATE_INTENT.addDataScheme("package");
     }
+
+    private static final String[] ICON_INTENT_ACTIONS = new String[] {
+            "com.fede.launcher.THEME_ICONPACK",
+            "com.anddoes.launcher.THEME",
+            "com.novalauncher.THEME",
+            "com.teslacoilsw.launcher.THEME",
+            "com.gau.go.launcherex.theme",
+            "org.adw.launcher.THEMES",
+            "org.adw.launcher.icons.ACTION_PICK_ICON",
+            "net.oneplus.launcher.icons.ACTION_PICK_ICON",
+    };
 
     private IconPackStore iconPackStore = null;
     private BroadcastReceiver broadCastReceiver = new BroadcastReceiver() {
@@ -106,10 +118,15 @@ public final class IconPackSettingsFragment extends RadioSettingsFragment {
         final PackageManager pm = context.getPackageManager();
         final Set<IconPackInfo> availablePacks = new LinkedHashSet<>();
         final List<ResolveInfo> eligiblePacks = new ArrayList<>();
-        eligiblePacks.addAll(pm.queryIntentActivities(
-                new Intent("com.novalauncher.THEME"), 0));
-        eligiblePacks.addAll(pm.queryIntentActivities(
-                new Intent("org.adw.launcher.icons.ACTION_PICK_ICON"), 0));
+        for (String action : ICON_INTENT_ACTIONS) {
+            Intent iconPackIntent;
+            if (action.equals("com.anddoes.launcher.THEME")) {
+                iconPackIntent = new Intent(Intent.ACTION_MAIN).addCategory("com.anddoes.launcher.THEME");
+            } else {
+                iconPackIntent = new Intent(action);
+            }
+            eligiblePacks.addAll(pm.queryIntentActivities(iconPackIntent, PackageManager.GET_META_DATA));
+        }
 
         // Add default
         final String defaultLabel = context.getString(R.string.icon_pack_default_label);
