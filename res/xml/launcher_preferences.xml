@@ -42,13 +42,6 @@
         android:persistent="true" />
 
     <SwitchPreference
-        android:key="pref_allowRotation"
-        android:title="@string/allow_rotation_title"
-        android:summary="@string/allow_rotation_desc"
-        android:defaultValue="@bool/allow_rotation"
-        android:persistent="true" />
-
-    <SwitchPreference
         android:defaultValue="true"
         android:key="pref_enable_minus_one"
         android:summary="@string/pref_show_google_now_summary"
@@ -61,6 +54,13 @@
         android:summary="@string/suggestion_pref_screen_desc">
         <intent android:action="android.settings.ACTION_CONTENT_SUGGESTIONS_SETTINGS" />
     </androidx.preference.PreferenceScreen>
+
+    <SwitchPreference
+        android:key="pref_allowRotation"
+        android:title="@string/allow_rotation_title"
+        android:summary="@string/allow_rotation_desc"
+        android:defaultValue="@bool/allow_rotation"
+        android:persistent="true" />
 
     <androidx.preference.PreferenceScreen
         android:key="pref_developer_options"
