@@ -18,6 +18,7 @@ package com.android.launcher3;
 
 import static com.android.launcher3.LauncherPrefs.GRID_NAME;
 import static com.android.launcher3.Utilities.dpiFromPx;
+import static com.android.launcher3.settings.SettingsActivity.KEY_DOCK_SEARCH;
 import static com.android.launcher3.testing.shared.ResourceUtils.INVALID_RESOURCE_HANDLE;
 import static com.android.launcher3.util.DisplayController.CHANGE_DENSITY;
 import static com.android.launcher3.util.DisplayController.CHANGE_NAVIGATION_MODE;
@@ -359,6 +360,7 @@ public class InvariantDeviceProfile implements OnSharedPreferenceChangeListener 
             case KEY_ALLAPPS_THEMED_ICONS:
             case KEY_SHOW_DESKTOP_LABELS:
             case KEY_SHOW_DRAWER_LABELS:
+            case KEY_DOCK_SEARCH:
                 onConfigChanged(mContext);
                 break;
         }
