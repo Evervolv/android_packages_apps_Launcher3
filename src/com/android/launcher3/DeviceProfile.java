@@ -77,6 +77,7 @@ public class DeviceProfile {
     public final boolean transposeLayoutWithOrientation;
     public final boolean isTwoPanels;
     public final boolean isQsbInline;
+    private final boolean isQsbHotseat;
 
     // Device properties in current orientation
     public final boolean isLandscape;
@@ -390,6 +391,7 @@ public class DeviceProfile {
                 : inv.inlineQsb[INDEX_DEFAULT] || inv.inlineQsb[INDEX_LANDSCAPE])
                 && hotseatQsbHeight > 0;
         isQsbInline = inv.inlineQsb[mTypeIndex] && canQsbInline;
+        isQsbHotseat = Utilities.isQsbHotseat(context);
 
         areNavButtonsInline = isTaskbarPresent && !isGestureMode;
         numShownHotseatIcons =
