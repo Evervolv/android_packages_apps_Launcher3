@@ -60,7 +60,11 @@ public class Hotseat extends CellLayout implements Insettable {
     public Hotseat(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-        mQsb = LayoutInflater.from(context).inflate(R.layout.search_container_hotseat, this, false);
+        if (Utilities.isQsbHotseat(context)) {
+            mQsb = LayoutInflater.from(context).inflate(R.layout.search_container_hotseat, this, false);
+        } else {
+            mQsb = LayoutInflater.from(context).inflate(R.layout.empty_view, this, false);
+        }
         addView(mQsb);
 
         mQsbHeight = getResources().getDimensionPixelSize(R.dimen.qsb_widget_height);
@@ -173,7 +177,9 @@ public class Hotseat extends CellLayout implements Insettable {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        int qsbWidth = mActivity.getDeviceProfile().qsbWidth;
+        int qsbWidth = mActivity.getDeviceProfile().isQsbInline
+                ? mActivity.getDeviceProfile().qsbWidth
+                : getShortcutsAndWidgets().getMeasuredWidth();
 
         mQsb.measure(MeasureSpec.makeMeasureSpec(qsbWidth, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(mQsbHeight, MeasureSpec.EXACTLY));

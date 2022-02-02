@@ -19,6 +19,7 @@ package com.android.launcher3.qsb;
 import static android.appwidget.AppWidgetManager.ACTION_APPWIDGET_BIND;
 import static android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID;
 import static android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_PROVIDER;
+import static com.android.launcher3.settings.SettingsActivity.SEARCH_PACKAGE;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -74,6 +75,9 @@ public class QsbContainerView extends FrameLayout {
             ComponentName componentName = searchManager.getGlobalSearchActivity();
             if (componentName != null) {
                 providerPkg = searchManager.getGlobalSearchActivity().getPackageName();
+            }
+            if (providerPkg == null && Utilities.isPackageEnabled(context, SEARCH_PACKAGE)) {
+                providerPkg = SEARCH_PACKAGE;
             }
         }
         return providerPkg;

@@ -66,6 +66,7 @@ public class DeviceProfile {
     public final boolean transposeLayoutWithOrientation;
     public final boolean isTwoPanels;
     public final boolean isQsbInline;
+    private final boolean isQsbHotseat;
 
     // Device properties in current orientation
     public final boolean isLandscape;
@@ -366,6 +367,7 @@ public class DeviceProfile {
                 : inv.inlineQsb[INDEX_DEFAULT] || inv.inlineQsb[INDEX_LANDSCAPE])
                 && hotseatQsbHeight > 0;
         isQsbInline = inv.inlineQsb[mTypeIndex] && canQsbInline;
+        isQsbHotseat = Utilities.isQsbHotseat(context);
 
         // We shrink hotseat sizes regardless of orientation, if nav buttons are inline and QSB
         // might be inline in either orientations, to keep hotseat size consistent across rotation.
@@ -381,15 +383,20 @@ public class DeviceProfile {
                 isTwoPanels ? inv.numDatabaseAllAppsColumns : inv.numAllAppsColumns;
         hotseatBarSizeExtraSpacePx = 0;
         hotseatBarTopPaddingPx =
-                res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_top_padding);
+                res.getDimensionPixelSize(isQsbHotseat
+                        ? R.dimen.dynamic_grid_hotseat_top_padding_widget
+                        : R.dimen.dynamic_grid_hotseat_top_padding);
         if (isQsbInline) {
             hotseatBarBottomPaddingPx = res.getDimensionPixelSize(R.dimen.inline_qsb_bottom_margin);
         } else {
             hotseatBarBottomPaddingPx = (isTallDevice ? res.getDimensionPixelSize(
                     R.dimen.dynamic_grid_hotseat_bottom_tall_padding)
-                    : res.getDimensionPixelSize(
-                            R.dimen.dynamic_grid_hotseat_bottom_non_tall_padding))
-                    + res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_bottom_padding);
+                    : res.getDimensionPixelSize(isQsbHotseat
+                            ? R.dimen.dynamic_grid_hotseat_bottom_non_tall_padding_widget
+                            : R.dimen.dynamic_grid_hotseat_bottom_non_tall_padding))
+                    + res.getDimensionPixelSize(isQsbHotseat
+                            ? R.dimen.dynamic_grid_hotseat_bottom_padding_widget
+                            : R.dimen.dynamic_grid_hotseat_bottom_padding);
         }
 
         springLoadedHotseatBarTopMarginPx = res.getDimensionPixelSize(
@@ -399,7 +406,9 @@ public class DeviceProfile {
         // Add a bit of space between nav bar and hotseat in vertical bar layout.
         hotseatBarSidePaddingStartPx = isVerticalBarLayout() ? workspacePageIndicatorHeight : 0;
         hotseatExtraVerticalSize =
-                res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_extra_vertical_size);
+                res.getDimensionPixelSize(isQsbHotseat
+                        ? R.dimen.dynamic_grid_hotseat_extra_vertical_size_widget
+                        : R.dimen.dynamic_grid_hotseat_extra_vertical_size);
         updateHotseatIconSize(pxFromDp(inv.iconSize[INDEX_DEFAULT], mMetrics));
 
         qsbBottomMarginOriginalPx = isScalableGrid
