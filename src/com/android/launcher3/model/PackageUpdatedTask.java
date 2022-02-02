@@ -18,6 +18,7 @@ package com.android.launcher3.model;
 import static com.android.launcher3.model.BgDataModel.Callbacks.FLAG_QUIET_MODE_ENABLED;
 import static com.android.launcher3.model.data.WorkspaceItemInfo.FLAG_AUTOINSTALL_ICON;
 import static com.android.launcher3.model.data.WorkspaceItemInfo.FLAG_RESTORED_ICON;
+import static com.android.launcher3.settings.SettingsActivity.SEARCH_PACKAGE;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -35,6 +36,7 @@ import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.LauncherSettings.Favorites;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.icons.BitmapInfo;
 import com.android.launcher3.icons.IconCache;
@@ -111,6 +113,7 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                 : ItemInfoMatcher.ofPackages(packageSet, mUser);
         final HashSet<ComponentName> removedComponents = new HashSet<>();
         final HashMap<String, List<LauncherActivityInfo>> activitiesLists = new HashMap<>();
+        boolean needsRestart = false;
 
         switch (mOp) {
             case OP_ADD: {
@@ -122,6 +125,7 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                     }
                     activitiesLists.put(
                             packages[i], appsList.addPackage(context, packages[i], mUser));
+                    needsRestart = SEARCH_PACKAGE.equals(packages[i]);
                 }
                 flagOp = FlagOp.NO_OP.removeFlag(WorkspaceItemInfo.FLAG_DISABLED_NOT_AVAILABLE);
                 break;
@@ -151,6 +155,7 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                 for (int i = 0; i < N; i++) {
                     FileLog.d(TAG, "Removing app icon" + packages[i]);
                     iconCache.removeIconsForPkg(packages[i], mUser);
+                    needsRestart = SEARCH_PACKAGE.equals(packages[i]);
                 }
                 // Fall through
             }
@@ -167,6 +172,9 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                         WorkspaceItemInfo.FLAG_DISABLED_SUSPENDED, mOp == OP_SUSPEND);
                 if (DEBUG) Log.d(TAG, "mAllAppsList.(un)suspend " + N);
                 appsList.updateDisabledFlags(matcher, flagOp);
+                for (int i = 0; i < N; i++) {
+                    needsRestart = SEARCH_PACKAGE.equals(packages[i]);
+                }
                 break;
             case OP_USER_AVAILABILITY_CHANGE: {
                 UserManagerState ums = new UserManagerState();
@@ -372,6 +380,10 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                 dataModel.widgetsModel.update(app, new PackageUserKey(packages[i], mUser));
             }
             bindUpdatedWidgets(dataModel);
+        }
+
+        if (needsRestart) {
+            Utilities.restart(context);
         }
     }
 

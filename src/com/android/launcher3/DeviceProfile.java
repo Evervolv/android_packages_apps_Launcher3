@@ -86,6 +86,7 @@ public class DeviceProfile {
     public final boolean isMultiDisplay;
     public final boolean isTwoPanels;
     public final boolean isQsbInline;
+    private final boolean isQsbHotseat;
 
     // Device properties in current orientation
     public final boolean isLandscape;
@@ -455,12 +456,14 @@ public class DeviceProfile {
         hotseatQsbShadowHeight = res.getDimensionPixelSize(R.dimen.qsb_shadow_height);
         hotseatQsbVisualHeight = hotseatQsbHeight - 2 * hotseatQsbShadowHeight;
 
+        isQsbHotseat = Utilities.isQsbHotseat(context);
+
         // Whether QSB might be inline in appropriate orientation (e.g. landscape).
-        boolean canQsbInline = (isTwoPanels ? inv.inlineQsb[INDEX_TWO_PANEL_PORTRAIT]
+        boolean canQsbInline = isQsbHotseat && (isTwoPanels ? inv.inlineQsb[INDEX_TWO_PANEL_PORTRAIT]
                 || inv.inlineQsb[INDEX_TWO_PANEL_LANDSCAPE]
                 : inv.inlineQsb[INDEX_DEFAULT] || inv.inlineQsb[INDEX_LANDSCAPE])
                 && hotseatQsbHeight > 0;
-        isQsbInline = isScalableGrid && inv.inlineQsb[mTypeIndex] && canQsbInline;
+        isQsbInline = (isQsbHotseat || isScalableGrid) && inv.inlineQsb[mTypeIndex] && canQsbInline;
 
         areNavButtonsInline = isTaskbarPresent && !isGestureMode;
         numShownHotseatIcons =
@@ -469,11 +472,12 @@ public class DeviceProfile {
         numShownAllAppsColumns =
                 isTwoPanels ? inv.numDatabaseAllAppsColumns : inv.numAllAppsColumns;
 
-        int hotseatBarBottomSpace = pxFromDp(inv.hotseatBarBottomSpace[mTypeIndex], mMetrics);
+        int hotseatBarBottomSpace = isQsbHotseat ? pxFromDp(
+                inv.hotseatBarBottomSpace[mTypeIndex], mMetrics) : 0;
         int minQsbMargin = res.getDimensionPixelSize(R.dimen.min_qsb_margin);
-        hotseatQsbSpace = pxFromDp(inv.hotseatQsbSpace[mTypeIndex], mMetrics);
+        hotseatQsbSpace = isQsbHotseat ? pxFromDp(inv.hotseatQsbSpace[mTypeIndex], mMetrics) : 0;
         // Have a little space between the inset and the QSB
-        if (mInsets.bottom + minQsbMargin > hotseatBarBottomSpace) {
+        if (isQsbHotseat && mInsets.bottom + minQsbMargin > hotseatBarBottomSpace) {
             int availableSpace = hotseatQsbSpace - (mInsets.bottom - hotseatBarBottomSpace);
 
             // Only change the spaces if there is space
@@ -663,7 +667,7 @@ public class DeviceProfile {
      * necessary.
      */
     public void recalculateHotseatWidthAndBorderSpace() {
-        if (!isScalableGrid) return;
+        if (!isScalableGrid && !isQsbHotseat) return;
 
         int columns = inv.hotseatColumnSpan[mTypeIndex];
         float hotseatWidthPx = getIconToIconWidthForColumns(columns);

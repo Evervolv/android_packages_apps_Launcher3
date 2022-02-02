@@ -18,6 +18,9 @@ package com.android.launcher3;
 
 import static com.android.launcher3.icons.BitmapInfo.FLAG_THEMED;
 import static com.android.launcher3.model.data.ItemInfoWithIcon.FLAG_ICON_BADGED;
+import static com.android.launcher3.settings.SettingsActivity.KEY_DOCK_SEARCH;
+import static com.android.launcher3.settings.SettingsActivity.SEARCH_PACKAGE;
+import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
 import static com.android.launcher3.util.SplitConfigurationOptions.STAGE_POSITION_BOTTOM_OR_RIGHT;
 import static com.android.launcher3.util.SplitConfigurationOptions.STAGE_POSITION_TOP_OR_LEFT;
 import static com.android.launcher3.util.SplitConfigurationOptions.STAGE_TYPE_MAIN;
@@ -81,6 +84,7 @@ import com.android.launcher3.shortcuts.ShortcutKey;
 import com.android.launcher3.shortcuts.ShortcutRequest;
 import com.android.launcher3.testing.shared.ResourceUtils;
 import com.android.launcher3.util.IntArray;
+import com.android.launcher3.util.PackageManagerHelper;
 import com.android.launcher3.util.SplitConfigurationOptions.SplitPositionOption;
 import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
@@ -124,6 +128,8 @@ public final class Utilities {
 
     @ChecksSdkIntAtLeast(api = VERSION_CODES.TIRAMISU, codename = "T")
     public static final boolean ATLEAST_T = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU;
+
+    private static final long WAIT_BEFORE_RESTART = 250;
 
     /**
      * Set on a motion event dispatched from the nav bar. See {@link MotionEvent#setEdgeFlags(int)}.
@@ -799,5 +805,25 @@ public final class Utilities {
             default:
                 // No-Op
         }
+    }
+
+    public static void restart(final Context context) {
+        MODEL_EXECUTOR.execute(() -> {
+            try {
+                Thread.sleep(WAIT_BEFORE_RESTART);
+            } catch (Exception ignored) {
+            }
+            android.os.Process.killProcess(android.os.Process.myPid());
+        });
+    }
+
+    private static boolean isSearchAppEnabled(Context context) {
+        return new PackageManagerHelper(context).isAppEnabled(SEARCH_PACKAGE, Process.myUserHandle());
+    }
+
+    public static boolean isQsbHotseat(Context context) {
+        final boolean searchAppEnabled = isSearchAppEnabled(context);
+        if (!searchAppEnabled) return false;
+        return LauncherPrefs.getPrefs(context).getBoolean(KEY_DOCK_SEARCH, searchAppEnabled);
     }
 }
