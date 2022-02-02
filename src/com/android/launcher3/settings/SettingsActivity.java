@@ -85,8 +85,9 @@ public class SettingsActivity extends FragmentActivity
 
     private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
     private static final String KEY_SUGGESTIONS = "pref_suggestions";
+    public static final String KEY_DOCK_SEARCH = "pref_dock_search";
     private static final String PERSONALIZATION_PACKAGE = "com.google.android.as";
-    private static final String SEARCH_PACKAGE = "com.google.android.googlequicksearchbox";
+    public static final String SEARCH_PACKAGE = "com.google.android.googlequicksearchbox";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +144,15 @@ public class SettingsActivity extends FragmentActivity
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) { }
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        switch (key) {
+            case KEY_DOCK_SEARCH:
+                LauncherAppState.getInstanceNoCreate().setNeedsRestart();
+                break;
+            default:
+                break;
+        }
+    }
 
     private boolean startPreference(String fragment, Bundle args, String key) {
         if (Utilities.ATLEAST_P && getSupportFragmentManager().isStateSaved()) {
@@ -279,6 +288,7 @@ public class SettingsActivity extends FragmentActivity
                     return updateDeveloperOption();
 
                 case KEY_MINUS_ONE:
+                case KEY_DOCK_SEARCH:
                     return Utilities.isPackageEnabled(getActivity(), SEARCH_PACKAGE);
 
                 case KEY_SUGGESTIONS:

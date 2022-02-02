@@ -17,6 +17,9 @@
 package com.android.launcher3;
 
 import static com.android.launcher3.model.data.ItemInfoWithIcon.FLAG_ICON_BADGED;
+import static com.android.launcher3.settings.SettingsActivity.KEY_DOCK_SEARCH;
+import static com.android.launcher3.settings.SettingsActivity.SEARCH_PACKAGE;
+import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
@@ -132,6 +135,8 @@ public final class Utilities {
 
     public static final boolean ATLEAST_S = BuildCompat.isAtLeastS()
             || Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
+
+    private static final long WAIT_BEFORE_RESTART = 250;
 
     /**
      * Set on a motion event dispatched from the nav bar. See {@link MotionEvent#setEdgeFlags(int)}.
@@ -906,5 +911,20 @@ public final class Utilities {
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    public static boolean isHotseatQsbEnabled(Context context) {
+        return getPrefs(context).getBoolean(KEY_DOCK_SEARCH, true)
+                && isPackageEnabled(context, SEARCH_PACKAGE);
+    }
+
+    public static void restart(final Context context) {
+        MODEL_EXECUTOR.execute(() -> {
+            try {
+                Thread.sleep(WAIT_BEFORE_RESTART);
+            } catch (Exception ignored) {
+            }
+            android.os.Process.killProcess(android.os.Process.myPid());
+        });
     }
 }

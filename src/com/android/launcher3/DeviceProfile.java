@@ -20,6 +20,7 @@ import static com.android.launcher3.ResourceUtils.pxFromDp;
 import static com.android.launcher3.Utilities.dpiFromPx;
 import static com.android.launcher3.Utilities.pxFromSp;
 import static com.android.launcher3.folder.ClippedFolderIconLayoutRule.ICON_OVERLAP_FACTOR;
+import static com.android.launcher3.settings.SettingsActivity.KEY_DOCK_SEARCH;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -337,17 +338,27 @@ public class DeviceProfile {
         numShownAllAppsColumns =
                 isTwoPanels ? inv.numDatabaseAllAppsColumns : inv.numAllAppsColumns;
         hotseatBarSizeExtraSpacePx = 0;
+
+        boolean isHotseatQsb = Utilities.isHotseatQsbEnabled(context);
         hotseatBarTopPaddingPx =
-                res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_top_padding);
+                res.getDimensionPixelSize(isHotseatQsb
+                        ? R.dimen.dynamic_grid_hotseat_top_padding_widget
+                        : R.dimen.dynamic_grid_hotseat_top_padding);
         hotseatBarBottomPaddingPx = (isTallDevice ? 0
-                : res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_bottom_non_tall_padding))
-                + res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_bottom_padding);
+                : res.getDimensionPixelSize(isHotseatQsb
+                        ? R.dimen.dynamic_grid_hotseat_bottom_non_tall_padding_widget
+                        : R.dimen.dynamic_grid_hotseat_bottom_non_tall_padding))
+                + res.getDimensionPixelSize(isHotseatQsb
+                        ? R.dimen.dynamic_grid_hotseat_bottom_padding_widget
+                        : R.dimen.dynamic_grid_hotseat_bottom_padding);
         hotseatBarSidePaddingEndPx =
                 res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_side_padding);
         // Add a bit of space between nav bar and hotseat in vertical bar layout.
         hotseatBarSidePaddingStartPx = isVerticalBarLayout() ? workspacePageIndicatorHeight : 0;
         hotseatExtraVerticalSize =
-                res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_extra_vertical_size);
+                res.getDimensionPixelSize(isHotseatQsb
+                        ? R.dimen.dynamic_grid_hotseat_extra_vertical_size_widget
+                        : R.dimen.dynamic_grid_hotseat_extra_vertical_size);
         updateHotseatIconSize(
                 pxFromDp(inv.iconSize[InvariantDeviceProfile.INDEX_DEFAULT], mMetrics, 1f));
 
