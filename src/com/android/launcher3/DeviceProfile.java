@@ -28,6 +28,8 @@ import static com.android.launcher3.config.FeatureFlags.ENABLE_MULTI_DISPLAY_PAR
 import static com.android.launcher3.folder.ClippedFolderIconLayoutRule.ICON_OVERLAP_FACTOR;
 import static com.android.launcher3.icons.GraphicsUtils.getShapePath;
 import static com.android.launcher3.icons.IconNormalizer.ICON_VISIBLE_AREA_FACTOR;
+import static com.android.launcher3.settings.SettingsActivity.KEY_DOCK_SEARCH;
+import static com.android.launcher3.settings.SettingsActivity.SEARCH_PACKAGE;
 import static com.android.launcher3.testing.shared.ResourceUtils.INVALID_RESOURCE_HANDLE;
 import static com.android.launcher3.testing.shared.ResourceUtils.pxFromDp;
 import static com.android.launcher3.testing.shared.ResourceUtils.roundPxValueFromFloat;
@@ -67,6 +69,7 @@ import com.android.launcher3.util.CellContentDimensions;
 import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.DisplayController.Info;
 import com.android.launcher3.util.IconSizeSteps;
+import com.android.launcher3.util.PackageManagerHelper;
 import com.android.launcher3.util.ResourceHelper;
 import com.android.launcher3.util.WindowBounds;
 
@@ -99,6 +102,7 @@ public class DeviceProfile {
     public final boolean isMultiDisplay;
     public final boolean isTwoPanels;
     public final boolean isQsbInline;
+    public final boolean isQsbDocked;
 
     // Device properties in current orientation
     public final boolean isLandscape;
@@ -514,12 +518,16 @@ public class DeviceProfile {
         hotseatQsbShadowHeight = res.getDimensionPixelSize(R.dimen.qsb_shadow_height);
         hotseatQsbVisualHeight = hotseatQsbHeight - 2 * hotseatQsbShadowHeight;
 
+        final PackageManagerHelper helper = new PackageManagerHelper(context);
+        isQsbDocked = helper.isAppEnabled(SEARCH_PACKAGE) ? 
+                LauncherPrefs.getPrefs(context).getBoolean(KEY_DOCK_SEARCH, true) : false;
+
         // Whether QSB might be inline in appropriate orientation (e.g. landscape).
         boolean canQsbInline = (isTwoPanels ? inv.inlineQsb[INDEX_TWO_PANEL_PORTRAIT]
                 || inv.inlineQsb[INDEX_TWO_PANEL_LANDSCAPE]
                 : inv.inlineQsb[INDEX_DEFAULT] || inv.inlineQsb[INDEX_LANDSCAPE])
                 && hotseatQsbHeight > 0;
-        isQsbInline = mIsScalableGrid && inv.inlineQsb[mTypeIndex] && canQsbInline;
+        isQsbInline = (isQsbDocked || mIsScalableGrid) && inv.inlineQsb[mTypeIndex] && canQsbInline;
 
         areNavButtonsInline = isTaskbarPresent && !isGestureMode;
         numShownHotseatIcons =
@@ -556,7 +564,8 @@ public class DeviceProfile {
                     responsiveAspectRatio, heightPx);
         } else {
             hotseatQsbSpace = pxFromDp(inv.hotseatQsbSpace[mTypeIndex], mMetrics);
-            hotseatBarBottomSpace = pxFromDp(inv.hotseatBarBottomSpace[mTypeIndex], mMetrics);
+            hotseatBarBottomSpace = isQsbDocked ? 
+                    pxFromDp(inv.hotseatBarBottomSpace[mTypeIndex], mMetrics) : 0;
             mHotseatBarEdgePaddingPx =
                     isVerticalBarLayout() ? workspacePageIndicatorHeight : 0;
             mHotseatBarWorkspaceSpacePx =
@@ -564,8 +573,12 @@ public class DeviceProfile {
         }
 
         if (!isVerticalBarLayout()) {
+            if (!isQsbDocked) {
+                hotseatQsbSpace = 0;
+            }
+
             // Have a little space between the inset and the QSB
-            if (mInsets.bottom + minQsbMargin > hotseatBarBottomSpace) {
+            if (!isQsbDocked && (mInsets.bottom + minQsbMargin > hotseatBarBottomSpace)) {
                 int availableSpace = hotseatQsbSpace - (mInsets.bottom - hotseatBarBottomSpace);
 
                 // Only change the spaces if there is space
@@ -865,7 +878,7 @@ public class DeviceProfile {
      * necessary.
      */
     public void recalculateHotseatWidthAndBorderSpace() {
-        if (!mIsScalableGrid) return;
+        if (!mIsScalableGrid && !isQsbDocked) return;
 
         int columns = inv.hotseatColumnSpan[mTypeIndex];
         float hotseatWidthPx = getIconToIconWidthForColumns(columns);
