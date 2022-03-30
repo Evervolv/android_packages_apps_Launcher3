@@ -261,6 +261,7 @@ public class DeviceProfile {
     public int allAppsLeftRightMargin;
     public final int numShownAllAppsColumns;
     public float allAppsIconTextSizePx;
+    public boolean allAppsIconThemed;
 
     // Overview
     public int overviewTaskMarginPx;
@@ -389,6 +390,7 @@ public class DeviceProfile {
         isTransientTaskbar = false;
         showDrawerLabel = true;
         showDesktopLabel = true;
+        allAppsIconThemed = false;
     }
 
     /** TODO: Once we fully migrate to staged split, remove "isMultiWindowMode" */
@@ -465,6 +467,7 @@ public class DeviceProfile {
 
         showDrawerLabel = inv.showDrawerLabel;
         showDesktopLabel = inv.showDesktopLabel;
+        allAppsIconThemed = inv.allAppsIconThemed;
 
         this.isTransientTaskbar = isTransientTaskbar;
         int transientTaskbarIconSize = pxFromDp(inv.transientTaskbarIconSize[mTypeIndex], mMetrics);

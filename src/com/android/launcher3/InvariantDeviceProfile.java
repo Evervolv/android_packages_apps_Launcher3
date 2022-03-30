@@ -24,6 +24,7 @@ import static com.android.launcher3.LauncherPrefs.ENABLE_TWOLINE_ALLAPPS_TOGGLE;
 import static com.android.launcher3.LauncherPrefs.FIXED_LANDSCAPE_MODE;
 import static com.android.launcher3.LauncherPrefs.GRID_NAME;
 import static com.android.launcher3.LauncherPrefs.NON_FIXED_LANDSCAPE_GRID_NAME;
+import static com.android.launcher3.LauncherPrefs.ALLAPPS_THEMED_ICONS;
 import static com.android.launcher3.LauncherPrefs.SHOW_DESKTOP_LABELS;
 import static com.android.launcher3.LauncherPrefs.SHOW_DRAWER_LABELS;
 import static com.android.launcher3.Utilities.dpiFromPx;
@@ -178,6 +179,7 @@ public class InvariantDeviceProfile {
     public float[] allAppsIconSize;
     public float[] allAppsIconTextSize;
     public PointF[] allAppsBorderSpaces;
+    public boolean allAppsIconThemed;
 
     public float[] transientTaskbarIconSize;
 
@@ -305,15 +307,17 @@ public class InvariantDeviceProfile {
             } else if (ENABLE_TWOLINE_ALLAPPS_TOGGLE.getSharedPrefKey().equals(key)
                     && enableTwoLinesInAllApps != prefs.get(ENABLE_TWOLINE_ALLAPPS_TOGGLE)) {
                 onConfigChanged(context);
-            } else if (SHOW_DESKTOP_LABELS.getSharedPrefKey().equals(key) || SHOW_DRAWER_LABELS.getSharedPrefKey().equals(key)) {
+            } else if (SHOW_DESKTOP_LABELS.getSharedPrefKey().equals(key)
+                    || SHOW_DRAWER_LABELS.getSharedPrefKey().equals(key)
+                    || ALLAPPS_THEMED_ICONS.getSharedPrefKey().equals(key)) {
                 onConfigChanged(context);
             }
         };
         prefs.addListener(prefListener, FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE,
-                SHOW_DESKTOP_LABELS, SHOW_DRAWER_LABELS);
+                SHOW_DESKTOP_LABELS, SHOW_DRAWER_LABELS, ALLAPPS_THEMED_ICONS);
         lifeCycle.addCloseable(() -> prefs.removeListener(prefListener,
                 FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE,
-                SHOW_DESKTOP_LABELS, SHOW_DRAWER_LABELS));
+                SHOW_DESKTOP_LABELS, SHOW_DRAWER_LABELS, ALLAPPS_THEMED_ICONS));
 
         SimpleBroadcastReceiver localeReceiver = new SimpleBroadcastReceiver(context,
                 MAIN_EXECUTOR, i -> onConfigChanged(context));
@@ -448,6 +452,7 @@ public class InvariantDeviceProfile {
         allAppsBorderSpaces = displayOption.allAppsBorderSpaces;
         allAppsIconSize = displayOption.allAppsIconSizes;
         allAppsIconTextSize = displayOption.allAppsIconTextSizes;
+        allAppsIconThemed = mPrefs.get(ALLAPPS_THEMED_ICONS);
 
         inlineQsb = closestProfile.inlineQsb;
 

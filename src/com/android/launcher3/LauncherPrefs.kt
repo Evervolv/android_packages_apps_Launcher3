@@ -323,6 +323,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         val SHOW_DESKTOP_LABELS = backedUpItem("pref_desktop_show_labels", true)
         @JvmField
         val SHOW_DRAWER_LABELS = backedUpItem("pref_drawer_show_labels", true)
+        @JvmField
+        val ALLAPPS_THEMED_ICONS = backedUpItem("pref_allapps_themed_icons", false)
 
         // Preferences for widget configurations
         @JvmField
