@@ -125,7 +125,6 @@ android_library {
         "com.google.android.material_material",
         "iconloader_base",
         "libGoogleFeed",
-        "com.evervolv.platform",
     ],
     manifest: "AndroidManifest-common.xml",
     sdk_version: "current",

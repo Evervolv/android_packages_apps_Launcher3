@@ -57,14 +57,13 @@
         android:summary="@string/pref_show_google_now_summary"
         android:title="@string/title_show_google_app" />
 
-    <evervolv.preference.SelfRemovingPreference
+    <Preference
         android:persistent="false"
         android:title="@string/suggestion_pref_screen_title"
         android:key="pref_suggestions"
-        android:summary="@string/suggestion_pref_screen_desc"
-        evervolv:requiresPackage="com.google.android.as">
+        android:summary="@string/suggestion_pref_screen_desc">
         <intent android:action="android.settings.ACTION_CONTENT_SUGGESTIONS_SETTINGS" />
-    </evervolv.preference.SelfRemovingPreference>
+    </Preference>
 
     <androidx.preference.PreferenceScreen
         android:key="pref_developer_options"
