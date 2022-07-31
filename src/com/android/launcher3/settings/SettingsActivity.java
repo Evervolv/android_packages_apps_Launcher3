@@ -93,6 +93,7 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
     private static final String PERSONALIZATION_PACKAGE = "com.google.android.as";
     public static final String SEARCH_PACKAGE = "com.google.android.googlequicksearchbox";
     public static final String KEY_DOCK_SEARCH = "pref_dock_search";
+    public static final String KEY_SMARTSPACE = "pref_smartspace";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +149,7 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
             case KEY_DOCK_SEARCH:
+            case KEY_SMARTSPACE:
                 LauncherAppState.getInstanceNoCreate().setNeedsRestart();
                 break;
             default:
