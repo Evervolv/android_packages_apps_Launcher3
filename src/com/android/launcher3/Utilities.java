@@ -19,6 +19,7 @@ package com.android.launcher3;
 import static com.android.launcher3.icons.BitmapInfo.FLAG_THEMED;
 import static com.android.launcher3.model.data.ItemInfoWithIcon.FLAG_ICON_BADGED;
 import static com.android.launcher3.settings.SettingsActivity.KEY_DOCK_SEARCH;
+import static com.android.launcher3.settings.SettingsActivity.KEY_SMARTSPACE;
 import static com.android.launcher3.settings.SettingsActivity.SEARCH_PACKAGE;
 import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
 import static com.android.launcher3.util.SplitConfigurationOptions.STAGE_POSITION_BOTTOM_OR_RIGHT;
@@ -973,4 +974,15 @@ public final class Utilities {
                 && getPrefs(context.getApplicationContext())
                         .getBoolean(KEY_DOCK_SEARCH, true);
     }
+
+    public static boolean showSmartspace(Context context) {
+        return isPackageEnabled(context, SEARCH_PACKAGE)
+            && isSmartspaceEnabled(context);
+    }
+
+    private static boolean isSmartspaceEnabled(Context context) {
+        SharedPreferences prefs = getPrefs(context.getApplicationContext());
+        return prefs.getBoolean(KEY_SMARTSPACE, true);
+    }
+
 }
