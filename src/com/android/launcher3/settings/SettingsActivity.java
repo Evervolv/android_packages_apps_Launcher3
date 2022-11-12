@@ -44,7 +44,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.InvariantDeviceProfile;
-import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherFiles;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
@@ -142,15 +141,7 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        switch (key) {
-            case KEY_DOCK_SEARCH:
-                LauncherAppState.getInstanceNoCreate().setNeedsRestart();
-                break;
-            default:
-                break;
-        }
-    }
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) { }
 
     private boolean startPreference(String fragment, Bundle args, String key) {
         if (Utilities.ATLEAST_P && getSupportFragmentManager().isStateSaved()) {
@@ -192,7 +183,6 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     /**
      * This fragment shows the launcher preferences.
@@ -336,12 +326,6 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                     requestAccessibilityFocus(getListView());
                 }
             }
-        }
-
-        @Override
-        public void onDestroy() {
-            super.onDestroy();
-            LauncherAppState.getInstanceNoCreate().checkIfRestartNeeded();
         }
 
         private PreferenceHighlighter createHighlighter() {
