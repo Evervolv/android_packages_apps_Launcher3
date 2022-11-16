@@ -948,8 +948,6 @@ public final class Utilities {
     }
 
     public static boolean isQsbHotseat(Context context) {
-        return isPackageEnabled(context, SEARCH_PACKAGE)
-                && getPrefs(context.getApplicationContext())
-                        .getBoolean(KEY_DOCK_SEARCH, true);
+        return isPackageEnabled(context, SEARCH_PACKAGE);
     }
 }
