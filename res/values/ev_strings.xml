@@ -32,6 +32,8 @@
     <string name="label_search">Search</string>
     <string name="label_lens">Google Lens</string>
     <string name="label_voice_search">Voice search</string>
+    <string name="dock_search_title">Google search bar</string>
+    <string name="dock_search_desc">Show search bar in the bottom dock</string>
 
     <!-- Icon pack -->
     <string name="icon_pack_title">Icon pack</string>
