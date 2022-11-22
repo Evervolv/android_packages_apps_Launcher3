@@ -808,6 +808,17 @@ public final class Utilities {
         return extra == null || type.isInstance(extra);
     }
 
+    /**
+     * @param context the context to use for resources
+     * @return true if the user is currently using gesture navigation 
+     */
+    public static boolean isUsingGestureNav(Context context) {
+        final Resources res = context.getResources();
+        final int resID = res.getIdentifier(
+            "config_navBarInteractionMode", "integer", "android");
+        return res.getInteger(resID) == 2;
+    }
+
     public static float squaredHypot(float x, float y) {
         return x * x + y * y;
     }
@@ -945,6 +956,16 @@ public final class Utilities {
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    public static void restart(final Context context) {
+        MODEL_EXECUTOR.execute(() -> {
+            try {
+                Thread.sleep(WAIT_BEFORE_RESTART);
+            } catch (Exception ignored) {
+            }
+            android.os.Process.killProcess(android.os.Process.myPid());
+        });
     }
 
     public static boolean isQsbHotseat(Context context) {

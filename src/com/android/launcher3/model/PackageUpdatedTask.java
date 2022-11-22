@@ -34,6 +34,7 @@ import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.LauncherSettings.Favorites;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.icons.BitmapInfo;
 import com.android.launcher3.icons.IconCache;
@@ -102,11 +103,13 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                 : ItemInfoMatcher.ofPackages(packageSet, mUser);
         final HashSet<ComponentName> removedComponents = new HashSet<>();
         final HashMap<String, List<LauncherActivityInfo>> activitiesLists = new HashMap<>();
+        boolean needsRestart = false;
 
         switch (mOp) {
             case OP_ADD: {
                 for (int i = 0; i < N; i++) {
                     if (DEBUG) Log.d(TAG, "mAllAppsList.addPackage " + packages[i]);
+                    needsRestart = isTargetPackage(packages[i]);
                     iconCache.updateIconsForPkg(packages[i], mUser);
                     if (FeatureFlags.PROMISE_APPS_IN_ALL_APPS.get()) {
                         appsList.removePackage(packages[i], mUser);
@@ -142,6 +145,7 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                 for (int i = 0; i < N; i++) {
                     FileLog.d(TAG, "Removing app icon" + packages[i]);
                     iconCache.removeIconsForPkg(packages[i], mUser);
+                    needsRestart = isTargetPackage(packages[i]);
                 }
                 // Fall through
             }
@@ -158,6 +162,9 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                         WorkspaceItemInfo.FLAG_DISABLED_SUSPENDED, mOp == OP_SUSPEND);
                 if (DEBUG) Log.d(TAG, "mAllAppsList.(un)suspend " + N);
                 appsList.updateDisabledFlags(matcher, flagOp);
+                for (int i = 0; i < N; i++) {
+                    needsRestart = isTargetPackage(packages[i]);
+                }
                 break;
             case OP_USER_AVAILABILITY_CHANGE: {
                 UserManagerState ums = new UserManagerState();
@@ -358,6 +365,10 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                 dataModel.widgetsModel.update(app, new PackageUserKey(packages[i], mUser));
             }
             bindUpdatedWidgets(dataModel);
+        }
+
+        if (needsRestart) {
+            Utilities.restart(context);
         }
     }
 
