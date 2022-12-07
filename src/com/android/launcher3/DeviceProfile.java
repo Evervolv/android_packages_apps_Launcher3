@@ -386,7 +386,8 @@ public class DeviceProfile {
         hotseatQsbVisualHeight = hotseatQsbHeight - 2 * hotseatQsbShadowHeight;
 
         // Whether QSB might be inline in appropriate orientation (e.g. landscape).
-        boolean canQsbInline = (isTwoPanels ? inv.inlineQsb[INDEX_TWO_PANEL_PORTRAIT]
+        boolean canQsbHotseat = Utilities.isQsbHotseat(context);
+        boolean canQsbInline = canQsbHotseat && (isTwoPanels ? inv.inlineQsb[INDEX_TWO_PANEL_PORTRAIT]
                 || inv.inlineQsb[INDEX_TWO_PANEL_LANDSCAPE]
                 : inv.inlineQsb[INDEX_DEFAULT] || inv.inlineQsb[INDEX_LANDSCAPE])
                 && hotseatQsbHeight > 0;
@@ -400,11 +401,12 @@ public class DeviceProfile {
         numShownAllAppsColumns =
                 isTwoPanels ? inv.numDatabaseAllAppsColumns : inv.numAllAppsColumns;
 
-        int hotseatBarBottomSpace = pxFromDp(inv.hotseatBarBottomSpace[mTypeIndex], mMetrics);
+        int hotseatBarBottomSpace = canQsbHotseat ? pxFromDp(
+                inv.hotseatBarBottomSpace[mTypeIndex], mMetrics) : 0;
         int minQsbMargin = res.getDimensionPixelSize(R.dimen.min_qsb_margin);
-        hotseatQsbSpace = pxFromDp(inv.hotseatQsbSpace[mTypeIndex], mMetrics);
+        hotseatQsbSpace = canQsbHotseat ? pxFromDp(inv.hotseatQsbSpace[mTypeIndex], mMetrics) : 0;
         // Have a little space between the inset and the QSB
-        if (mInsets.bottom + minQsbMargin > hotseatBarBottomSpace) {
+        if (canQsbHotseat && mInsets.bottom + minQsbMargin > hotseatBarBottomSpace) {
             int availableSpace = hotseatQsbSpace - (mInsets.bottom - hotseatBarBottomSpace);
 
             // Only change the spaces if there is space
