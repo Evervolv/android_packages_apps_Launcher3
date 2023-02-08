@@ -331,6 +331,9 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                 case KEY_ICON_PACK:
                     setupIconPackPreference(preference);
                     return true;
+
+                case KEY_DOCK_SEARCH:
+                    return Utilities.isPackageEnabled(getActivity(), SEARCH_PACKAGE);
             }
 
             return true;
