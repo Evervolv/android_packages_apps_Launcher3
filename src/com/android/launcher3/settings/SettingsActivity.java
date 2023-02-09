@@ -323,6 +323,8 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                     return updateDeveloperOption();
 
                 case KEY_MINUS_ONE:
+                case KEY_DOCK_SEARCH:
+                case KEY_SMARTSPACE:
                     return Utilities.isPackageEnabled(getActivity(), SEARCH_PACKAGE);
 
                 case KEY_SUGGESTIONS:
@@ -331,9 +333,6 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                 case KEY_ICON_PACK:
                     setupIconPackPreference(preference);
                     return true;
-
-                case KEY_DOCK_SEARCH:
-                    return Utilities.isPackageEnabled(getActivity(), SEARCH_PACKAGE);
             }
 
             return true;
