@@ -37,19 +37,6 @@
         launcher:logIdOn="613"
         launcher:logIdOff="614" />
 
-    <!--
-      LAUNCHER_HOME_SCREEN_ROTATION_ENABLED(615)
-      LAUNCHER_HOME_SCREEN_ROTATION_DISABLED(616)
-    -->
-    <SwitchPreference
-        android:key="pref_allowRotation"
-        android:title="@string/allow_rotation_title"
-        android:summary="@string/allow_rotation_desc"
-        android:defaultValue="false"
-        android:persistent="true"
-        launcher:logIdOn="615"
-        launcher:logIdOff="616" />
-
     <SwitchPreference
         android:defaultValue="true"
         android:key="pref_enable_minus_one"
@@ -61,6 +48,14 @@
         android:key="pref_dock_search"
         android:title="@string/dock_search_title"
         android:summary="@string/dock_search_desc" />
+
+    <androidx.preference.PreferenceScreen
+        android:key="pref_suggestions"
+        android:title="@string/pref_suggestions_title"
+        android:summary="@string/pref_suggestions_summary"
+        android:persistent="false">
+        <intent android:action="android.settings.ACTION_CONTENT_SUGGESTIONS_SETTINGS" />
+    </androidx.preference.PreferenceScreen>
 
     <SwitchPreference
         android:key="pref_allapps_themed_icons"
@@ -81,12 +76,17 @@
         android:defaultValue="true"
         android:persistent="true" />
 
-    <androidx.preference.PreferenceScreen
-        android:key="pref_suggestions"
-        android:title="@string/pref_suggestions_title"
-        android:summary="@string/pref_suggestions_summary"
-        android:persistent="false">
-        <intent android:action="android.settings.ACTION_CONTENT_SUGGESTIONS_SETTINGS" />
-    </androidx.preference.PreferenceScreen>
+    <!--
+      LAUNCHER_HOME_SCREEN_ROTATION_ENABLED(615)
+      LAUNCHER_HOME_SCREEN_ROTATION_DISABLED(616)
+    -->
+    <SwitchPreference
+        android:key="pref_allowRotation"
+        android:title="@string/allow_rotation_title"
+        android:summary="@string/allow_rotation_desc"
+        android:defaultValue="false"
+        android:persistent="true"
+        launcher:logIdOn="615"
+        launcher:logIdOff="616" />
 
 </androidx.preference.PreferenceScreen>
